@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
@@ -34,17 +35,13 @@ export default async function MovieDetailsPage({ params }) {
         <strong>Genre:</strong> {genre?.name || 'Unknown'}
       </p>
       <p className="text-gray-600 mb-4">
-        <strong>Director:</strong> {director?.name || 'Unknown'}
+      <Link href={`/movies/${movie.id}/director`} className="text-blue-600 hover:underline">
+        {director?.name || 'Unknown'}
+      </Link>
       </p>
 
       <p className="text-gray-800">{movie.description}</p>
 
-      {director?.biography && (
-        <div className="mt-8 bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">About the Director</h2>
-          <p className="text-gray-700">{director.biography}</p>
-        </div>
-      )}
     </div>
   );
 }
