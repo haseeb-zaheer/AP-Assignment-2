@@ -9,8 +9,6 @@ export const dynamic = 'force-static';
 // This page will be statically generated and revalidated every 60 seconds
 export default async function MoviesPage() {
 
-  const clickHandler = (movieId)=>{
-  }
   // since i used appRouter, appRouter does not have getStaticProps but instead 
   // usees this to implement ISR and SSG
   const res = await fetch('http://localhost:3000/api/moviesData', {

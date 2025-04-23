@@ -1,30 +1,22 @@
-'use client';
+import { notFound } from 'next/navigation';
 
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+export const dynamic = 'force-static';
 
-export default function Home() {
-  const [movies, setMovies] = useState([]);
-  const [trendingMovies, setTrendingMovies] = useState([]);
-  const router = useRouter();
+export default async function Home() {
+  // Implemented ISR like this as the new Next Versions do not have getStaticProps
+  const res = await fetch('http://localhost:3000/api/moviesData', {
+    next: { revalidate: 60 }, 
+  });
 
-  const clickHandler = () => {
-    router.push('/genres');
-  };
+  if (!res.ok) return notFound(); 
 
-  useEffect(() => {
-    axios.get('/api/moviesData')
-      .then(res => {
-        const allMovies = res.data.movies;
-        const trending = allMovies.filter(movie => movie.rating >= 8.5);
-        setMovies(allMovies);
-        setTrendingMovies(trending);
-      })
-      .catch(err => {
-        console.error("Failed to fetch movies:", err);
-      });
-  }, []);
+  const data = await res.json();
+
+  const trendingMovies = data.movies?.filter((movie) => movie.rating >= 8.5);
+
+  if (!trendingMovies || trendingMovies.length === 0) {
+    return notFound();
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 font-sans">
@@ -44,12 +36,12 @@ export default function Home() {
       </ul>
 
       <div className="text-center">
-        <button
-          onClick={clickHandler}
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
+        <a
+          href="/genres"
+          className="inline-block px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
         >
           Go to Genres Page
-        </button>
+        </a>
       </div>
     </div>
   );
